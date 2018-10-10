@@ -11,13 +11,12 @@ import android.os.Environment.getExternalStorageDirectory
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import java.io.File
-import java.io.FileFilter
 import java.util.*
 
 
 class actividad_principal : AppCompatActivity() {
 
-    private var tamaño = 0.0000
+    private var tamaño = "0.00"
     private var cantidad = 0
     var lista_videos: MutableList<archivo> = mutableListOf()
     var lista_imagenes: MutableList<archivo> = mutableListOf()
@@ -37,7 +36,7 @@ class actividad_principal : AppCompatActivity() {
         calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
 
-        val am = this!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val am = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         var intent = Intent(this,notificacion_limpiador::class.java)
         val pi = PendingIntent.getService(this,0,intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -57,11 +56,11 @@ class actividad_principal : AppCompatActivity() {
             }
         }
 
-        if (lista_videos.size > 0) {
-            tamaño = 0.00
+        if (lista_videos.size == 0) {
+            tamaño = "0,00"
             cantidad = 0
         } else {
-            tamaño = String.format("%.2f", lista_videos.sumByDouble { it.tamaño } / (1024 * 1024 * 1024)).toDouble()
+            tamaño = String.format("%.2f", lista_videos.sumByDouble { it.tamaño } / (1024 * 1024 * 1024))
             cantidad = lista_videos.size
         }
 
@@ -80,12 +79,12 @@ class actividad_principal : AppCompatActivity() {
             }
         }
 
-        if (lista_imagenes.size > 0) {
-            tamaño = String.format("%.2f", lista_imagenes.sumByDouble { it.tamaño } / (1024 * 1024 * 1024)).toDouble()
-            cantidad = lista_imagenes.size
-        } else {
-            tamaño = 0.00
+        if (lista_imagenes.size == 0) {
+            tamaño = "0,00"
             cantidad = 0
+        } else {
+            tamaño = String.format("%.2f", lista_imagenes.sumByDouble { it.tamaño } / (1024 * 1024 * 1024))
+            cantidad = lista_imagenes.size
         }
 
         lista_archivos_total.add(lista_principal("Whatsapp Imagenes", cantidad.toString(), tamaño))
