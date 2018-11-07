@@ -15,11 +15,18 @@
         <activity android:name=".actividad_principal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".notificacion_limpiador"></service>
+        <receiver
+            android:name=".limpiador_automatico"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.carlos.limpiadorautomatico" />
+            </intent-filter>
+
+        </receiver>
     </application>
 
 </manifest>

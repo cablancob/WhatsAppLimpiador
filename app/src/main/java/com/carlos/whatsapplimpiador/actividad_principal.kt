@@ -34,12 +34,14 @@ class actividad_principal : AppCompatActivity() {
     fun programa() {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 0)
 
         val am = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        var intent = Intent(this,notificacion_limpiador::class.java)
-        val pi = PendingIntent.getService(this,0,intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        var intent = Intent(this, limpiador_automatico::class.java)
+        intent.action = "com.carlos.limpiadorautomatico"
+        val pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pi)
 
