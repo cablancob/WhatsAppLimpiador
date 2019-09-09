@@ -23,7 +23,7 @@ class limpiador_automatico : BroadcastReceiver() {
 
         if (intent.action.equals("com.carlos.limpiadorautomatico")) {
 
-            if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString().equals("0")) {
+            if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString().equals("12")) {
 
                 var lista_videos: MutableList<archivo> = mutableListOf()
                 var lista_imagenes: MutableList<archivo> = mutableListOf()
