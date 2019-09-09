@@ -29,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:text="Limpiador de Whatsapp"
+                android:textColor="#000000"
                 android:textStyle="bold" />
 
             <TextView
@@ -36,7 +37,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:text="Hora: 14:20" />
+                android:text="Hora: 14:20"
+                android:textColor="#000000" />
 
         </LinearLayout>
 
@@ -52,7 +54,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:text="Prueba" />
+                android:text="Prueba"
+                android:textColor="#000000" />
 
         </LinearLayout>
 
