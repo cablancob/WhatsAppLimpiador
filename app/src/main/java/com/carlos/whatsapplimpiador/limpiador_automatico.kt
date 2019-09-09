@@ -1,113 +1,116 @@
 package com.carlos.whatsapplimpiador
 
+import android.app.job.JobParameters
+import android.app.job.JobService
+import android.os.Environment
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
-import android.os.Environment
 import android.widget.RemoteViews
 import java.io.File
 import java.io.FileFilter
 import java.util.*
 
-class limpiador_automatico : BroadcastReceiver() {
 
-    override fun onReceive(context: Context, intent: Intent) {
+class limpiador_automatico : JobService() {
 
-        if (intent.action.equals("com.carlos.limpiadorautomatico")) {
 
-            if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toString().equals("12")) {
+    // Called by the Android system when it's time to run the job
+    override fun onStartJob(jobParameters: JobParameters): Boolean {
+        var lista_videos: MutableList<archivo> = mutableListOf()
+        var lista_imagenes: MutableList<archivo> = mutableListOf()
+        var cantidad_videos = 0
+        var cantidad_Imagenes = 0
+        var mensaje = "Se han borrando en total: "
+        var cantidad_semanas = -2
 
-                var lista_videos: MutableList<archivo> = mutableListOf()
-                var lista_imagenes: MutableList<archivo> = mutableListOf()
-                var cantidad_videos = 0
-                var cantidad_Imagenes = 0
-                var mensaje = "Se han borrando en total: "
-                var cantidad_semanas = -2
+        lista_videos.clear()
+        lista_imagenes.clear()
 
-                lista_videos.clear()
-                lista_imagenes.clear()
+        var file = File(Environment.getExternalStorageDirectory().absolutePath, "WhatsApp/Media/WhatsApp Images")
 
-                var file = File(Environment.getExternalStorageDirectory().absolutePath, "WhatsApp/Media/WhatsApp Images")
-
-                file.listFiles(object : FileFilter {
-                    override fun accept(pathname: File?): Boolean {
-                        var fecha = Calendar.getInstance()
-                        fecha.add(Calendar.WEEK_OF_YEAR, cantidad_semanas)
-                        var resultado = false
-                        if (pathname!!.isFile) {
-                            resultado = pathname.lastModified() / 1000 <= fecha.timeInMillis / 1000
-                        }
-                        return resultado
-                    }
-                }).forEach {
-                    if (it.isFile) {
-                        lista_imagenes.add(archivo(File(it.path).name, (File(it.path).lastModified() / 1000).toString(), it.path, File(it.path).length().toDouble()))
-                    }
+        file.listFiles(object : FileFilter {
+            override fun accept(pathname: File?): Boolean {
+                var fecha = Calendar.getInstance()
+                fecha.add(Calendar.WEEK_OF_YEAR, cantidad_semanas)
+                var resultado = false
+                if (pathname!!.isFile) {
+                    resultado = pathname.lastModified() / 1000 <= fecha.timeInMillis / 1000
                 }
-
-                cantidad_Imagenes = lista_imagenes.size
-
-                lista_imagenes.forEach {
-                    File(it.path).delete()
-                }
-
-                file = File(Environment.getExternalStorageDirectory().absolutePath, "WhatsApp/Media/WhatsApp Video")
-
-                file.listFiles(object : FileFilter {
-                    override fun accept(pathname: File?): Boolean {
-                        var fecha = Calendar.getInstance()
-                        fecha.add(Calendar.WEEK_OF_YEAR, cantidad_semanas)
-                        var resultado = false
-                        if (pathname!!.isFile) {
-                            resultado = pathname.lastModified() / 1000 <= fecha.timeInMillis / 1000
-                        }
-                        return resultado
-                    }
-                }).forEach {
-                    if (it.isFile) {
-                        lista_videos.add(archivo(File(it.path).name, (File(it.path).lastModified() / 1000).toString(), it.path, File(it.path).length().toDouble()))
-                    }
-                }
-
-                cantidad_videos = lista_videos.size
-
-                lista_videos.forEach {
-                    File(it.path).delete()
-                }
-
-
-                if ((cantidad_Imagenes > 0) and (cantidad_videos == 0)) {
-                    mensaje = mensaje + "${cantidad_Imagenes} imagenes"
-                }
-
-                if ((cantidad_Imagenes == 0) and (cantidad_videos > 0)) {
-                    mensaje = mensaje + "${cantidad_videos} videos"
-                }
-
-                if ((cantidad_Imagenes > 0) and (cantidad_videos > 0)) {
-                    mensaje = mensaje + "${cantidad_videos} videos y ${cantidad_Imagenes} imagenes"
-                }
-
-                if ((cantidad_Imagenes > 0) or (cantidad_videos > 0)) {
-                    Notificaciones(context, mensaje)
-                }
-
-                if ((cantidad_Imagenes == 0) or (cantidad_videos == 0)) {
-                    mensaje = "No hay archivos de mas de ${cantidad_semanas * -1} semanas para borrar "
-                    Notificaciones(context, mensaje)
-                }
-
+                return resultado
+            }
+        }).forEach {
+            if (it.isFile) {
+                lista_imagenes.add(archivo(File(it.path).name, (File(it.path).lastModified() / 1000).toString(), it.path, File(it.path).length().toDouble()))
             }
         }
 
+        cantidad_Imagenes = lista_imagenes.size
+
+        lista_imagenes.forEach {
+            File(it.path).delete()
+        }
+
+        file = File(Environment.getExternalStorageDirectory().absolutePath, "WhatsApp/Media/WhatsApp Video")
+
+        file.listFiles(object : FileFilter {
+            override fun accept(pathname: File?): Boolean {
+                var fecha = Calendar.getInstance()
+                fecha.add(Calendar.WEEK_OF_YEAR, cantidad_semanas)
+                var resultado = false
+                if (pathname!!.isFile) {
+                    resultado = pathname.lastModified() / 1000 <= fecha.timeInMillis / 1000
+                }
+                return resultado
+            }
+        }).forEach {
+            if (it.isFile) {
+                lista_videos.add(archivo(File(it.path).name, (File(it.path).lastModified() / 1000).toString(), it.path, File(it.path).length().toDouble()))
+            }
+        }
+
+        cantidad_videos = lista_videos.size
+
+        lista_videos.forEach {
+            File(it.path).delete()
+        }
+
+
+        if ((cantidad_Imagenes > 0) and (cantidad_videos == 0)) {
+            mensaje = mensaje + "${cantidad_Imagenes} imagenes"
+        }
+
+        if ((cantidad_Imagenes == 0) and (cantidad_videos > 0)) {
+            mensaje = mensaje + "${cantidad_videos} videos"
+        }
+
+        if ((cantidad_Imagenes > 0) and (cantidad_videos > 0)) {
+            mensaje = mensaje + "${cantidad_videos} videos y ${cantidad_Imagenes} imagenes"
+        }
+
+        if ((cantidad_Imagenes > 0) or (cantidad_videos > 0)) {
+            Notificaciones(this, mensaje)
+        }
+
+        if ((cantidad_Imagenes == 0) or (cantidad_videos == 0)) {
+            mensaje = "No hay archivos de mas de ${cantidad_semanas * -1} semanas para borrar "
+            Notificaciones(this, mensaje)
+        }
+        return true
+
+    }
+
+
+    // Called if the job was cancelled before being finished
+    override fun onStopJob(jobParameters: JobParameters): Boolean {
+        return true
     }
 
     fun Notificaciones(context: Context, mensaje: String) {
@@ -156,4 +159,5 @@ class limpiador_automatico : BroadcastReceiver() {
 
         notificationManager.notify(1234, builder.build())
     }
+
 }

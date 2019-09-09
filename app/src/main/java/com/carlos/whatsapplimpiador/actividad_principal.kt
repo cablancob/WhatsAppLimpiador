@@ -1,10 +1,8 @@
 package com.carlos.whatsapplimpiador
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
+
+
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
@@ -12,6 +10,11 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import java.io.File
 import java.util.*
+import android.app.job.JobInfo
+import android.content.ComponentName
+
+import android.app.job.JobScheduler
+import android.content.Context
 
 
 class actividad_principal : AppCompatActivity() {
@@ -29,6 +32,14 @@ class actividad_principal : AppCompatActivity() {
 
         validar_permisos()
 
+
+        val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        jobScheduler.schedule(JobInfo.Builder(12,
+                ComponentName(this, limpiador_automatico::class.java!!))
+                .setRequiresCharging(true)
+                .setPersisted(true)
+                .build())
+
     }
 
     fun programa() {
@@ -37,13 +48,6 @@ class actividad_principal : AppCompatActivity() {
         calendar.set(Calendar.MINUTE, 59)
         calendar.set(Calendar.SECOND, 0)
 
-        val am = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        var intent = Intent(this, limpiador_automatico::class.java)
-        intent.action = "com.carlos.limpiadorautomatico"
-        val pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pi)
 
         //Videos
 
